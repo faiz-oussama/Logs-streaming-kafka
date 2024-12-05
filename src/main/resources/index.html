@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log Monitoring Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.maptiler.com/maptiler-sdk-js/v2.3.0/maptiler-sdk.umd.js"></script>
+    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v2.3.0/maptiler-sdk.css" rel="stylesheet" />
+    <script src="https://cdn.maptiler.com/leaflet-maptilersdk/v2.0.0/leaflet-maptilersdk.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo-container">
+            <img src="logo.svg" alt="logo" class="logo">
+        </div>
+        <nav class="options">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="logVis.html">Logs</a></li>
+                <li><a href="#">Filters</a></li>
+                <li><a href="#">Alerts</a></li>
+                <li><a href="#">Settings</a></li>
+            </ul>
+        </nav>
+        <div class="group">
+            <svg viewBox="0 0 24 24" aria-hidden="true" class="search-icon">
+                <g>
+                    <path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"></path>
+                </g>
+            </svg>
+            <input id="query" class="input" type="search" placeholder="Search..." name="searchbar"/>
+        </div>
+        <div class="toggle-switch">
+            <label class="switch-label">
+                <input type="checkbox" class="checkbox">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </header>
+    <div class="health-analysis">
+        <h1>Overall Health Analysis</h1>
+        <p>Here is a summary of the current health status of the application. The following charts provide insights into key metrics and more.</p>
+    </div>
+    <div class="dashboard-container">
+        <aside class="leftsidebar">
+            <div class="kpi-card">
+                <h2 id="kpiTitle">Live Count</h2>
+                <p id="kpiValue">0</p>
+            </div>
+            <div class="pie-chart-card">
+                <div id="logLevelsPie" style="width: 300px; height: 250px;"></div>
+            </div>
+        </aside>
+        <main class="charts-area">
+            <div class="http-method">
+                <div id="httpMethodStatusChart" style="width: 600px; height: 430px;margin-top: 30px;"></div>
+            </div>
+            <div class="rightsidebar">
+                <div class="filter-container">
+                    <label for="date-filter" class="filter-label">Filter by Date Range</label>
+                    <div class="date-input-wrapper">
+                        <input type="date" id="start-date" class="date-input" name="start-date">
+                        <span class="to">to</span>
+                        <input type="date" id="end-date" class="date-input" name="end-date">
+                        <button onclick="applyDateRangeFilter()" class="apply-button">Apply</button>
+                    </div>
+                </div>                
+                <div class="app-health">
+                    <div id="appHealthContainer"style="width: 220px; height: 270px;margin-left:22px;"></div>
+                </div>
+            </div>  
+        </main>
+        <div class="container-2">
+            <div class="top-url">
+                <div id="topUrlsChart" style="width: 500px; height: 400px;"></div>
+            </div>
+            <div class="r-size-vs-errors">
+                <div id="r-size-vs-errors" style="width: 500px; height: 400px;"></div>
+            </div>
+        </div>   
+    </div>
+    <script src="script.js"></script>
+    <script src="ui.js"></script>
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.min.js" async></script>
+</body>
+</html>
