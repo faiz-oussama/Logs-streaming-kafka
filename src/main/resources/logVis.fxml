@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
@@ -20,8 +19,8 @@
                     <padding>
                         <Insets left="45"/>
                     </padding>
-                    <Label text="Dashboard" styleClass="nav-item" />
-                    <Label text="Logs" styleClass="nav-item, nav-item-active" />
+                    <Label fx:id="dashboardLabel" text="Dashboard" styleClass="nav-item" />
+                    <Label fx:id="logsLabel" text="Logs" styleClass="nav-item, nav-item-active" />
                     <Label text="Analytics" styleClass="nav-item" />
                     <Label text="Settings" styleClass="nav-item" />
                 </HBox>

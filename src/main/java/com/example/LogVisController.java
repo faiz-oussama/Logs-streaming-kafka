@@ -37,6 +37,10 @@ public class LogVisController {
     @FXML
     private HBox navbar;
     @FXML
+    private Label dashboardLabel;
+    @FXML
+    private Label logsLabel;
+    @FXML
     private TableView<LogEntry> logsTable;
     @FXML
     private TableColumn<LogEntry, String> columnIP;
@@ -222,5 +226,13 @@ public class LogVisController {
         if (elasticSearchClient != null) {
             elasticSearchClient.close();
         }
+    }
+
+    public Label getDashboardLabel() {
+        return dashboardLabel;
+    }
+
+    public Label getLogsLabel() {
+        return logsLabel;
     }
 }

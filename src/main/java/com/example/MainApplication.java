@@ -3,42 +3,44 @@ package com.example;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 
 public class MainApplication extends Application {
+    private Parent logVisRoot;
+    private Parent analyticsRoot;
+    private LogVisController logVisController;
+    private LogAnalyticsController analyticsController;
+    private StackPane mainContainer;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Create tab pane
-        TabPane tabPane = new TabPane();
+        // Create main container
+        mainContainer = new StackPane();
         
         // Load Log Visualization view
         FXMLLoader logVisLoader = new FXMLLoader(getClass().getResource("/logVis.fxml"));
-        Parent logVisRoot = logVisLoader.load();
-        LogVisController logVisController = logVisLoader.getController();
+        logVisRoot = logVisLoader.load();
+        logVisController = logVisLoader.getController();
         
         // Load Log Analytics view
         FXMLLoader analyticsLoader = new FXMLLoader(getClass().getResource("/logAnalytics.fxml"));
-        Parent analyticsRoot = analyticsLoader.load();
-        LogAnalyticsController analyticsController = analyticsLoader.getController();
+        analyticsRoot = analyticsLoader.load();
+        analyticsController = analyticsLoader.getController();
         
         // Connect the controllers
         logVisController.setAnalyticsController(analyticsController);
         
-        // Create tabs
-        Tab logVisTab = new Tab("Log Visualization", logVisRoot);
-        Tab analyticsTab = new Tab("Log Analytics", analyticsRoot);
-        logVisTab.setClosable(false);
-        analyticsTab.setClosable(false);
+        // Set up view switching
+        setupViewSwitching();
         
-        // Add tabs to tab pane
-        tabPane.getTabs().addAll(logVisTab, analyticsTab);
+        // Initially show log visualization view
+        mainContainer.getChildren().add(logVisRoot);
         
         // Create scene
-        Scene scene = new Scene(tabPane, 1280, 800);
+        Scene scene = new Scene(mainContainer, 1280, 800);
         scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
         
         // Set up stage
@@ -48,6 +50,31 @@ public class MainApplication extends Application {
         
         // Start log streaming
         logVisController.startLogStreaming();
+    }
+
+    private void setupViewSwitching() {
+        // Get navbar items from LogVisController
+        Label dashboardLabel = logVisController.getDashboardLabel();
+        Label logsLabel = logVisController.getLogsLabel();
+        
+        // Add click handlers
+        dashboardLabel.setOnMouseClicked(event -> {
+            mainContainer.getChildren().clear();
+            mainContainer.getChildren().add(analyticsRoot);
+            
+            // Update active states
+            dashboardLabel.getStyleClass().add("nav-item-active");
+            logsLabel.getStyleClass().remove("nav-item-active");
+        });
+        
+        logsLabel.setOnMouseClicked(event -> {
+            mainContainer.getChildren().clear();
+            mainContainer.getChildren().add(logVisRoot);
+            
+            // Update active states
+            logsLabel.getStyleClass().add("nav-item-active");
+            dashboardLabel.getStyleClass().remove("nav-item-active");
+        });
     }
 
     public static void main(String[] args) {
