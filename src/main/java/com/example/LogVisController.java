@@ -18,7 +18,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Timer;
 import java.util.TimerTask;
-
+import org.kordamp.ikonli.javafx.FontIcon;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
@@ -81,7 +81,7 @@ public class LogVisController {
             public void run() {
                 updateLogsTable();
             }
-        }, 0, 1000); // Update every 500ms
+        }, 0, 500); // Update every 500ms
 
         // Initialize Elasticsearch and start fetching logs
         initializeElasticSearch();
@@ -95,59 +95,55 @@ public class LogVisController {
         columnAction.setCellValueFactory(new PropertyValueFactory<>("action"));
         columnLogLevel.setCellValueFactory(new PropertyValueFactory<>("logLevel"));
         
-        // Custom cell factory for log level column
+        setupLogLevelColumn();
+        
+        logsTable.setItems(logEntries);
+    }
+
+    private void setupLogLevelColumn() {
         columnLogLevel.setCellFactory(column -> new TableCell<LogEntry, String>() {
-            private final HBox container = new HBox();
-            private final Label levelLabel = new Label();
-            private final Region icon = new Region();
-            
-            {
-                container.setAlignment(Pos.CENTER);
-                container.setSpacing(5);
-                icon.setMinSize(12, 12);
-                icon.setMaxSize(12, 12);
-                container.getChildren().addAll(icon, levelLabel);
-                container.getStyleClass().add("log-level-cell");
-            }
-            
             @Override
-            protected void updateItem(String level, boolean empty) {
-                super.updateItem(level, empty);
-                
-                if (empty || level == null) {
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
                     setGraphic(null);
                     setText(null);
+                    setStyle("");
                 } else {
-                    levelLabel.setText(level);
-                    container.getStyleClass().removeAll("log-level-ERROR", "log-level-WARNING", 
-                        "log-level-INFO", "log-level-SUCCESS");
-                    icon.getStyleClass().add("log-icon");
+                    HBox container = new HBox();
+                    container.getStyleClass().add("log-level");
+                    container.setAlignment(Pos.CENTER);
                     
-                    switch (level) {
+                    // Create icon
+                    FontIcon icon = new FontIcon();
+                    icon.getStyleClass().add("log-level-icon");
+                    
+                    // Create label with the log level text
+                    Label label = new Label(item);
+                    label.getStyleClass().add("log-level-text");
+                    
+                    // Add appropriate style classes based on log level
+                    switch (item.toUpperCase()) {
                         case "ERROR":
-                            container.getStyleClass().add("log-level-ERROR");
-                            icon.setStyle("-fx-shape: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z';");
+                            container.getStyleClass().add("log-level-error");
+                            icon.setIconLiteral("fas-exclamation-circle");
                             break;
-                        case "WARNING":
-                            container.getStyleClass().add("log-level-WARNING");
-                            icon.setStyle("-fx-shape: 'M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z';");
+                        case "WARN":
+                            container.getStyleClass().add("log-level-warn");
+                            icon.setIconLiteral("fas-exclamation-triangle");
                             break;
                         case "INFO":
-                            container.getStyleClass().add("log-level-INFO");
-                            icon.setStyle("-fx-shape: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z';");
+                            container.getStyleClass().add("log-level-info");
+                            icon.setIconLiteral("fas-info-circle");
                             break;
-                        default:
-                            container.getStyleClass().add("log-level-SUCCESS");
-                            icon.setStyle("-fx-shape: 'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z';");
                     }
                     
+                    container.getChildren().addAll(icon, label);
                     setGraphic(container);
                     setText(null);
                 }
             }
         });
-        
-        logsTable.setItems(logEntries);
     }
 
     private void updateLogsTable() {

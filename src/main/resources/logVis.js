@@ -1,75 +1,129 @@
-let currentIndex = 0;
-const batchSize = 1;
+// Utility functions
+const formatDate = (date) => {
+    return new Date(date).toLocaleString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    });
+};
 
-function fetchLogsData() {
-    $.ajax({
-        url: 'logs.json',
-        method: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            const tableBody = document.querySelector('.table100 tbody');
-            const logsToDisplay = data.slice(currentIndex, currentIndex + batchSize);
+const getLogLevelClass = (level) => {
+    switch(level.toUpperCase()) {
+        case 'ERROR': return 'badge badge-error';
+        case 'WARN': return 'badge badge-warn';
+        case 'INFO': return 'badge badge-info';
+        default: return 'badge badge-info';
+    }
+};
 
-            logsToDisplay.forEach(log => {
-                const row = document.createElement('tr');
+// DOM Elements
+const tbody = document.querySelector('.logs-table tbody');
+const searchInput = document.querySelector('.search-input');
+const startDate = document.getElementById('start-date');
+const endDate = document.getElementById('end-date');
 
-                const cellIP = document.createElement('td');
-                cellIP.textContent = log.client_ip || 'N/A';
-                cellIP.classList.add('column1');
+// State
+let logs = [];
+let filteredLogs = [];
 
-                const cellTimestamp = document.createElement('td');
-                cellTimestamp.textContent = log.timestamp || 'N/A';
-                cellTimestamp.classList.add('column2');
+// Event Listeners
+searchInput.addEventListener('input', handleSearch);
+startDate.addEventListener('change', handleDateFilter);
+endDate.addEventListener('change', handleDateFilter);
 
-                const cellRequestType = document.createElement('td');
-                cellRequestType.textContent = log.http_method || 'N/A';
-                cellRequestType.classList.add('column3');
+// Handlers
+function handleSearch(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    filterAndRenderLogs(searchTerm);
+}
 
-                const cellStatusCode = document.createElement('td');
-                cellStatusCode.textContent = log.status_code || 'N/A';
-                cellStatusCode.classList.add('column4');
+function handleDateFilter() {
+    const start = startDate.value ? new Date(startDate.value) : null;
+    const end = endDate.value ? new Date(endDate.value) : null;
+    
+    if (start && end) {
+        filteredLogs = logs.filter(log => {
+            const logDate = new Date(log.timestamp);
+            return logDate >= start && logDate <= end;
+        });
+    } else {
+        filteredLogs = [...logs];
+    }
+    
+    renderLogs(filteredLogs);
+}
 
-                const cellAction = document.createElement('td');
-                cellAction.textContent = log.action || 'N/A';
-                cellAction.classList.add('column5');
+function filterAndRenderLogs(searchTerm = '') {
+    filteredLogs = logs.filter(log => 
+        log.clientIp.toLowerCase().includes(searchTerm) ||
+        log.action.toLowerCase().includes(searchTerm) ||
+        log.requestType.toLowerCase().includes(searchTerm) ||
+        log.logLevel.toLowerCase().includes(searchTerm)
+    );
+    renderLogs(filteredLogs);
+}
 
-                const cellLogLevel = document.createElement('td');
-                const logLevelSpan = document.createElement('span');
-                logLevelSpan.textContent = log.log_level || 'N/A';
-                logLevelSpan.classList.add(log.log_level.toLowerCase());
-                cellLogLevel.appendChild(logLevelSpan);
-
-                row.appendChild(cellIP);
-                row.appendChild(cellTimestamp);
-                row.appendChild(cellRequestType);
-                row.appendChild(cellStatusCode);
-                row.appendChild(cellAction);
-                row.appendChild(cellLogLevel);
-
-                // Apply color based on log level
-                if (log.log_level === 'WARN') {
-                    row.classList.add('warn');
-                } else if (log.log_level === 'ERROR') {
-                    row.classList.add('error');
-                } else if (log.log_level === 'INFO') {
-                    row.classList.add('info');
-                }
-
-                tableBody.prepend(row);
-            });
-
-            currentIndex += batchSize;
-            if (currentIndex >= data.length) {
-                currentIndex = 0; // Reset to start if end is reached
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('Error loading logs data:', error);
-        }
+// Render Functions
+function renderLogs(logsToRender) {
+    tbody.innerHTML = '';
+    
+    logsToRender.forEach(log => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${log.clientIp}</td>
+            <td>${formatDate(log.timestamp)}</td>
+            <td>${log.requestType}</td>
+            <td>${log.statusCode}</td>
+            <td>${log.action}</td>
+            <td><span class="${getLogLevelClass(log.logLevel)}">${log.logLevel}</span></td>
+        `;
+        tbody.appendChild(row);
     });
 }
 
-// Polling interval set to 2 seconds
-setInterval(fetchLogsData, 2000);
+// WebSocket Connection
+function connectWebSocket() {
+    const ws = new WebSocket('ws://localhost:8080/logs');
+    
+    ws.onopen = () => {
+        console.log('Connected to WebSocket');
+    };
+    
+    ws.onmessage = (event) => {
+        const newLog = JSON.parse(event.data);
+        logs.unshift(newLog); // Add to beginning of array
+        if (logs.length > 100) logs.pop(); // Keep only latest 100 logs
+        
+        // Apply current filters
+        const searchTerm = searchInput.value.toLowerCase();
+        filterAndRenderLogs(searchTerm);
+    };
+    
+    ws.onclose = () => {
+        console.log('WebSocket connection closed');
+        // Attempt to reconnect after 5 seconds
+        setTimeout(connectWebSocket, 5000);
+    };
+    
+    ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+    };
+}
 
-document.addEventListener('DOMContentLoaded', fetchLogsData);
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    // Set default date range (last 24 hours)
+    const now = new Date();
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    startDate.value = yesterday.toISOString().split('T')[0];
+    endDate.value = now.toISOString().split('T')[0];
+    
+    // Connect to WebSocket
+    connectWebSocket();
+});

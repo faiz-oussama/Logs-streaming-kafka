@@ -16,7 +16,7 @@ public class Main extends Application {
         controller = loader.getController();
 
         primaryStage.setTitle("Real Time Log Visualization");
-        primaryStage.setScene(new Scene(root, 1200, 800));
+        primaryStage.setScene(new Scene(root, 1200, 600));
         primaryStage.show();
 
         // Start the log streaming process

@@ -1,176 +1,339 @@
-/* Reset styles */
-@import url('https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
-
+/* Root Variables */
 .root {
-    -fx-background-color: #f4f4f4;
-    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-primary: #4361ee;
+    -fx-primary-light: #4895ef;
+    -fx-secondary: #3f37c9;
+    -fx-accent: #4cc9f0;
+    -fx-error: #ef476f;
+    -fx-warning: #ffd60a;
+    -fx-info: #4895ef;
+    -fx-success: #06d6a0;
+    -fx-background: #f8f9fa;
+    -fx-card-background: rgba(255, 255, 255, 0.95);
+    -fx-font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system;
 }
 
-#navbar {
-    -fx-background-color: white;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 2);
+/* Main Container Styles */
+.top-container {
+    -fx-background-color: linear-gradient(to right, #4895ef, #4cc9f0);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 12, 0, 0, 2);
+}
+
+/* Navbar Styles */
+.navbar {
+    -fx-background-color: transparent;
+    -fx-padding: 20 30;
+}
+
+.nav-items {
+    -fx-spacing: 40;
 }
 
 .nav-item {
-    -fx-font-size: 13px;
-    -fx-text-fill: #333333;
+    -fx-text-fill: rgba(255, 255, 255, 0.9);
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+    -fx-padding: 12 24;
+    -fx-background-radius: 12;
     -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 1);
+    -fx-transition: all 0.3s ease;
 }
 
 .nav-item:hover {
-    -fx-text-fill: #2bacf7;
+    -fx-text-fill: white;
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.nav-item-active {
+    -fx-text-fill: white;
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0, 0, 2);
+}
+
+/* Search Field Styles */
+.search-container {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-background-radius: 12;
+    -fx-padding: 0 20;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 1);
 }
 
 .search-field {
-    -fx-background-color: #f4f4f4;
-    -fx-background-radius: 20;
-    -fx-padding: 8 15;
-    -fx-pref-width: 250;
-    -fx-prompt-text-fill: #898989;
-    -fx-font-size: 13px;
-}
-
-.dark-mode-toggle {
-    -fx-background-radius: 50;
-    -fx-min-width: 40;
-    -fx-min-height: 25;
-    -fx-background-color: #1e1e1e;
-    -fx-border-radius: 50;
-}
-
-.content-area {
     -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.7);
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-padding: 12 16;
+    -fx-min-width: 280px;
+}
+
+/* Header Section Styles */
+.header-section {
+    -fx-background-color: -fx-card-background;
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 10, 0, 0, 1);
+    -fx-padding: 30;
+    -fx-margin: 25;
 }
 
 .title-label {
-    -fx-font-size: 28px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #333333;
+    -fx-font-size: 32px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #2d3436;
 }
 
 .subtitle-label {
-    -fx-font-size: 14px;
-    -fx-text-fill: #898989;
+    -fx-font-size: 15px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #636e72;
 }
 
-.date-filter {
-    -fx-background-color: white;
-    -fx-background-radius: 30;
-    -fx-padding: 5 15;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 2);
-    -fx-spacing: 10;
-}
-
-.date-filter .date-picker {
-    -fx-background-color: transparent;
-    -fx-pref-width: 130;
-}
-
-.date-filter .date-picker .arrow-button {
-    -fx-background-color: transparent;
-}
-
-.to-label {
-    -fx-text-fill: #898989;
+.live-badge {
+    -fx-background-color: -fx-accent;
+    -fx-text-fill: white;
     -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 6 16;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(76, 201, 240, 0.3), 8, 0, 0, 0);
+}
+
+/* Modern Button Styles */
+.button {
+    -fx-font-weight: 600;
+    -fx-font-size: 14px;
+    -fx-background-radius: 12;
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease;
 }
 
 .filter-button {
-    -fx-background-color: #007bff;
+    -fx-background-color: -fx-primary;
     -fx-text-fill: white;
-    -fx-background-radius: 20;
-    -fx-padding: 7 20;
-    -fx-font-size: 13px;
+    -fx-padding: 12 24;
+    -fx-effect: dropshadow(gaussian, rgba(67, 97, 238, 0.3), 8, 0, 0, 0);
 }
 
 .filter-button:hover {
-    -fx-background-color: #0056b3;
+    -fx-background-color: -fx-primary-light;
+    -fx-effect: dropshadow(gaussian, rgba(67, 97, 238, 0.4), 12, 0, 0, 4);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.action-button {
+    -fx-background-color: rgba(67, 97, 238, 0.1);
+    -fx-text-fill: -fx-primary;
+    -fx-padding: 10 20;
+    -fx-effect: dropshadow(gaussian, rgba(67, 97, 238, 0.1), 4, 0, 0, 0);
+}
+
+.action-button:hover {
+    -fx-background-color: rgba(67, 97, 238, 0.15);
+    -fx-effect: dropshadow(gaussian, rgba(67, 97, 238, 0.2), 8, 0, 0, 2);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+/* Date Filter Styles */
+.date-filter {
+    -fx-spacing: 12;
+    -fx-padding: 8;
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 6, 0, 0, 1);
+}
+
+.date-picker {
+    -fx-background-color: transparent;
+    -fx-border-color: #e9ecef;
+    -fx-border-radius: 8;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+}
+
+.date-picker .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8;
+}
+
+.date-picker .arrow-button:hover {
+    -fx-background-color: rgba(67, 97, 238, 0.1);
+}
+
+.date-separator {
+    -fx-text-fill: #636e72;
+    -fx-font-weight: 500;
+}
+
+/* Table Styles */
+.table-container {
+    -fx-background-color: -fx-card-background;
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 10, 0, 0, 1);
+    -fx-padding: 25;
+    -fx-margin: 25;
+}
+
+.section-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d3436;
 }
 
 .logs-table {
-    -fx-background-color: white;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-}
-
-.logs-table .column-header-background {
-    -fx-background-color: #45425e;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-}
-
-.logs-table .column-header {
     -fx-background-color: transparent;
-    -fx-text-fill: white;
-    -fx-font-size: 13px;
-    -fx-padding: 15 10;
+    -fx-border-color: transparent;
+}
+
+.table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 12 8;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: rgba(67, 97, 238, 0.03);
+}
+
+.table-row-cell:selected {
+    -fx-background-color: rgba(67, 97, 238, 0.1);
+}
+
+.table-view .column-header {
+    -fx-background-color: #f8f9fa;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 16 12;
+    -fx-border-color: transparent;
+}
+
+/* Log Level Styles */
+.log-level {
+    -fx-padding: 6 16;
+    -fx-background-radius: 30;
+    -fx-min-width: 100px;
+    -fx-min-height: 28px;
+    -fx-alignment: CENTER;
+    -fx-spacing: 8;
+    -fx-cursor: hand;
     -fx-border-width: 0;
 }
 
-.logs-table .table-row-cell {
-    -fx-background-color: white;
-    -fx-table-cell-border-color: transparent;
+.log-level-text {
+    -fx-font-family: 'Segoe UI', system-ui;
+    -fx-font-weight: 600;
+    -fx-font-size: 12px;
 }
 
-.logs-table .table-row-cell:odd {
-    -fx-background-color: #f8f9fa;
+.log-level-error {
+    -fx-background-color: linear-gradient(to right, #ff4d6d, #ff758f);
+    -fx-effect: dropshadow(gaussian, rgba(255, 77, 109, 0.4), 8, 0, 0, 4);
 }
 
-.logs-table .table-cell {
-    -fx-padding: 12 10;
-    -fx-text-fill: #898989;
-    -fx-font-size: 13px;
-    -fx-alignment: CENTER_LEFT;
+.log-level-error .log-level-text,
+.log-level-error .log-level-icon {
+    -fx-text-fill: white;
+    -fx-fill: white;
 }
 
-/* Style for different log levels */
-.error-label {
-    -fx-text-fill: #ff3b30;
-    -fx-font-weight: bold;
+.log-level-warn {
+    -fx-background-color: linear-gradient(to right, #ffd60a, #ffd93d);
+    -fx-effect: dropshadow(gaussian, rgba(255, 214, 10, 0.4), 8, 0, 0, 4);
 }
 
-.info-label {
-    -fx-text-fill: #34c759;
-    -fx-font-weight: bold;
+.log-level-warn .log-level-text,
+.log-level-warn .log-level-icon {
+    -fx-text-fill: #664d03;
+    -fx-fill: #664d03;
 }
 
-.warn-label {
-    -fx-text-fill: #ffcc00;
-    -fx-font-weight: bold;
+.log-level-info {
+    -fx-background-color: linear-gradient(to right, #0dcaf0, #4dd4f7);
+    -fx-effect: dropshadow(gaussian, rgba(13, 202, 240, 0.4), 8, 0, 0, 4);
 }
 
-.log-level-cell {
-    -fx-padding: 5 10;
-    -fx-background-radius: 5;
-    -fx-alignment: center;
-    -fx-font-weight: bold;
-    -fx-graphic-text-gap: 5;
+.log-level-info .log-level-text,
+.log-level-info .log-level-icon {
+    -fx-text-fill: white;
+    -fx-fill: white;
 }
 
-.log-level-ERROR {
-    -fx-text-fill: #e74c3c;
-    -fx-background-color: #fde8e7;
+/* Log Level Icons */
+.log-level-icon {
+    -fx-font-family: "Font Awesome 5 Free";
+    -fx-font-size: 14px;
+    -fx-icon-color: currentColor;
 }
 
-.log-level-WARNING {
-    -fx-text-fill: #f39c12;
-    -fx-background-color: #fef5e7;
+/* Hover Effects */
+.log-level {
+    -fx-transition: all 0.2s ease-in-out;
 }
 
-.log-level-INFO {
-    -fx-text-fill: #3498db;
-    -fx-background-color: #e8f4f8;
+.log-level:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
 }
 
-.log-level-SUCCESS {
-    -fx-text-fill: #2ecc71;
-    -fx-background-color: #e8f8f0;
+.log-level-error:hover {
+    -fx-background-color: linear-gradient(to right, #ff3d61, #ff6582);
 }
 
-.log-icon {
-    -fx-fill: currentColor;
+.log-level-warn:hover {
+    -fx-background-color: linear-gradient(to right, #ffd200, #ffd428);
 }
 
+.log-level-info:hover {
+    -fx-background-color: linear-gradient(to right, #0bbce1, #3dcef4);
+}
+
+/* Scrollbar Styles */
+.scroll-bar {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #cbd5e1;
+    -fx-background-radius: 12;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #94a3b8;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-background-radius: 50%;
+    -fx-min-width: 44px;
+    -fx-min-height: 44px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 1);
+}
+
+.theme-toggle:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.25);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+/* Animations */
+.button, .nav-item, .theme-toggle {
+    -fx-transition-duration: 0.2s;
+}
+
+/* Dashboard Container */
 .dashboard-container {
     display: grid;
     height: fit-content;

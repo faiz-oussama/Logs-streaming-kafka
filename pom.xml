@@ -79,7 +79,16 @@
         <artifactId>log4j-slf4j-impl</artifactId>
         <version>2.19.0</version>
     </dependency>
-
+    <dependency>
+  <groupId>org.kordamp.ikonli</groupId>
+  <artifactId>ikonli-javafx</artifactId>
+  <version>12.3.1</version>
+</dependency>
+<dependency>
+  <groupId>org.kordamp.ikonli</groupId>
+  <artifactId>ikonli-fontawesome5-pack</artifactId>
+  <version>12.3.1</version>
+</dependency>
     <!-- JavaFX dependencies, using version 21 for latest support -->
     <dependency>
         <groupId>org.openjfx</groupId>
