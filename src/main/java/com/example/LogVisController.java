@@ -63,6 +63,11 @@ public class LogVisController {
     private ObjectMapper objectMapper = new ObjectMapper();
     private ElasticSearchClient elasticSearchClient;
     private AtomicReference<String> lastProcessedId = new AtomicReference<>("");
+    private LogAnalyticsController analyticsController;
+
+    public void setAnalyticsController(LogAnalyticsController controller) {
+        this.analyticsController = controller;
+    }
 
     @FXML
     public void initialize() {
@@ -158,6 +163,13 @@ public class LogVisController {
                 logsTable.refresh();
                 // Auto-scroll to latest logs
                 logsTable.scrollTo(logEntries.size() - 1);
+                
+                // Send logs to analytics controller
+                if (analyticsController != null) {
+                    for (LogEntry log : newLogs) {
+                        analyticsController.processNewLog(log);
+                    }
+                }
             });
         }
     }

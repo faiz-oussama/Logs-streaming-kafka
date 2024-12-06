@@ -174,10 +174,18 @@
               <execution>
                   <id>default-cli</id>
                   <configuration>
-                      <mainClass>com.example.Main</mainClass>
+                      <mainClass>com.example.MainApplication</mainClass>
                   </configuration>
               </execution>
           </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-exec-plugin</artifactId>
+          <version>3.1.0</version>
+          <configuration>
+            <mainClass>com.example.MainApplication</mainClass>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-assembly-plugin</artifactId>

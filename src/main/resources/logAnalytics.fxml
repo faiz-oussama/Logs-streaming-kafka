@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.LogAnalyticsController" fitToWidth="true">
+    <VBox spacing="20" style="-fx-background-color: white;">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+
+        <!-- Header -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Log Analytics Dashboard" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+            <Region HBox.hgrow="ALWAYS" />
+            <ComboBox fx:id="timeRangeComboBox" />
+        </HBox>
+
+        <!-- Summary Cards -->
+        <HBox spacing="20">
+            <VBox styleClass="summary-card" style="-fx-background-color: #f0f8ff; -fx-padding: 15; -fx-background-radius: 5;">
+                <Label text="Total Logs" style="-fx-font-size: 14px;"/>
+                <Label fx:id="totalLogsLabel" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+            </VBox>
+            <VBox styleClass="summary-card" style="-fx-background-color: #fff0f0; -fx-padding: 15; -fx-background-radius: 5;">
+                <Label text="Error Rate" style="-fx-font-size: 14px;"/>
+                <Label fx:id="errorRateLabel" text="0%" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+            </VBox>
+            <VBox styleClass="summary-card" style="-fx-background-color: #f0fff0; -fx-padding: 15; -fx-background-radius: 5;">
+                <Label text="Average Response Time" style="-fx-font-size: 14px;"/>
+                <Label fx:id="avgResponseTimeLabel" text="0ms" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+            </VBox>
+        </HBox>
+
+        <!-- Charts Row 1 -->
+        <HBox spacing="20">
+            <PieChart fx:id="logLevelChart" title="Log Levels Distribution" legendVisible="true" 
+                     HBox.hgrow="ALWAYS" prefHeight="300"/>
+            <BarChart fx:id="httpMethodsChart" title="HTTP Methods Distribution" legendVisible="true"
+                      HBox.hgrow="ALWAYS" prefHeight="300">
+                <xAxis>
+                    <CategoryAxis label="HTTP Method"/>
+                </xAxis>
+                <yAxis>
+                    <NumberAxis label="Count"/>
+                </yAxis>
+            </BarChart>
+        </HBox>
+
+        <!-- Charts Row 2 -->
+        <HBox spacing="20">
+            <LineChart fx:id="timeSeriesChart" title="Logs Over Time" legendVisible="true"
+                      HBox.hgrow="ALWAYS" prefHeight="300">
+                <xAxis>
+                    <CategoryAxis label="Time"/>
+                </xAxis>
+                <yAxis>
+                    <NumberAxis label="Count"/>
+                </yAxis>
+            </LineChart>
+            <BarChart fx:id="statusCodesChart" title="Status Codes Distribution" legendVisible="true"
+                      HBox.hgrow="ALWAYS" prefHeight="300">
+                <xAxis>
+                    <CategoryAxis label="Status Code"/>
+                </xAxis>
+                <yAxis>
+                    <NumberAxis label="Count"/>
+                </yAxis>
+            </BarChart>
+        </HBox>
+
+        <!-- Top Endpoints Table -->
+        <VBox>
+            <Label text="Top Accessed Endpoints" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+            <TableView fx:id="endpointsTable" prefHeight="200">
+                <columns>
+                    <TableColumn fx:id="endpointColumn" text="Endpoint" prefWidth="300"/>
+                    <TableColumn fx:id="hitsColumn" text="Hits" prefWidth="100"/>
+                    <TableColumn fx:id="avgResponseTimeColumn" text="Avg Response Time" prefWidth="150"/>
+                    <TableColumn fx:id="errorRateColumn" text="Error Rate" prefWidth="100"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </VBox>
+</ScrollPane>
