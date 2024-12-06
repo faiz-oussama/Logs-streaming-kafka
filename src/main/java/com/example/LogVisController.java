@@ -81,7 +81,7 @@ public class LogVisController {
             public void run() {
                 updateLogsTable();
             }
-        }, 0, 500); // Update every 500ms
+        }, 0, 1000); // Update every 500ms
 
         // Initialize Elasticsearch and start fetching logs
         initializeElasticSearch();

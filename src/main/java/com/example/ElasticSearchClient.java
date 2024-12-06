@@ -2,6 +2,8 @@ package com.example;
 
 import java.io.IOException;
 import java.security.cert.X509Certificate;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,7 +39,8 @@ public class ElasticSearchClient {
     private final KafkaLogProducer kafkaProducer;
     private volatile boolean isRunning = true;
     private Thread pollingThread;
-    private static final int BATCH_SIZE = 10;  // Constant for batch size
+    private static final int BATCH_SIZE = 1;
+    private AtomicInteger currentFrom = new AtomicInteger(0);
 
     public ElasticSearchClient(String serverUrl, String apiKey) {
         try {
@@ -71,14 +74,13 @@ public class ElasticSearchClient {
 
     public void startPolling() {
         try {
+            currentFrom.set(0);  // Reset the counter when starting
             System.out.println("Starting polling for new logs...");
             pollingThread = new Thread(() -> {
-                AtomicInteger lastProcessedCount = new AtomicInteger(0);
-                
+                AtomicReference<String> lastProcessedId = new AtomicReference<>();
                 while (isRunning) {
                     try {
-                        List<LogEntry> newLogs = fetchNewLogs(lastProcessedCount);
-                        System.out.println("Fetched " + newLogs.size() + " new logs");
+                        List<LogEntry> newLogs = fetchNewLogs(lastProcessedId);
                         for (LogEntry log : newLogs) {
                             kafkaProducer.sendLog(log);
                         }
@@ -106,32 +108,35 @@ public class ElasticSearchClient {
         }
     }
 
-    public List<LogEntry> fetchNewLogs(AtomicInteger lastProcessedCount) throws IOException {
+    public List<LogEntry> fetchNewLogs(AtomicReference<String> lastProcessedId) throws IOException {
         List<LogEntry> logs = new ArrayList<>();
-
-        SearchResponse<LogEntry> response = esClient.search(s -> s
-                .index("filebeat-logs-*")
-                .from(lastProcessedCount.get())
-                .size(BATCH_SIZE)
-                .sort(sort -> sort
-                    .field(f -> f
-                        .field("@timestamp")
-                        .order(SortOrder.Desc)
-                    )
-                )
-                .query(q -> q
-                        .matchAll(m -> m)
-                ), LogEntry.class);
-
-        List<Hit<LogEntry>> hits = response.hits().hits();
-        System.out.println("Total hits: " + response.hits().total().value());
         
-        if (!hits.isEmpty()) {
-            for (Hit<LogEntry> hit : hits) {
-                logs.add(hit.source());
+        try {
+            SearchResponse<LogEntry> response = esClient.search(s -> s
+                    .index("filebeat-logs-*")
+                    .from(currentFrom.get())
+                    .size(BATCH_SIZE)
+                    .sort(sort -> sort.field(f -> f.field("@timestamp").order(SortOrder.Asc)))
+                    .query(q -> q
+                            .matchAll(m -> m)
+                    ), LogEntry.class);
+
+            List<Hit<LogEntry>> hits = response.hits().hits();
+            if (!hits.isEmpty()) {
+                Hit<LogEntry> hit = hits.get(0);
+                if (hit.source() != null) {
+                    logs.add(hit.source());
+                    currentFrom.incrementAndGet();
+                    System.out.println("Fetched log " + currentFrom.get() + " of " + response.hits().total().value());
+                }
+            } else {
+                // If no more results, reset the counter to get new logs that might have been added
+                Thread.sleep(1000);  // Wait a bit before resetting to avoid tight loop
+                currentFrom.set(0);
             }
-            lastProcessedCount.addAndGet(hits.size());
-            System.out.println("Processed " + lastProcessedCount.get() + " logs in total");
+        } catch (Exception e) {
+            System.err.println("Error fetching logs: " + e.getMessage());
+            e.printStackTrace();
         }
 
         return logs;
@@ -167,44 +172,6 @@ public class ElasticSearchClient {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return logs;
-    }
-
-    public List<LogEntry> fetchNewLogs(AtomicReference<String> lastProcessedId) throws IOException {
-        List<LogEntry> logs = new ArrayList<>();
-        try {
-            SearchResponse<LogEntry> response = esClient.search(s -> s
-                    .index("filebeat-*")
-                    .size(BATCH_SIZE)
-                    .sort(sort -> sort
-                        .field(f -> f
-                            .field("@timestamp")
-                            .order(SortOrder.Desc)
-                        )
-                    )
-                    .query(q -> q
-                            .matchAll(m -> m)
-                    ), LogEntry.class);
-
-            List<Hit<LogEntry>> hits = response.hits().hits();
-            System.out.println("Total hits found: " + response.hits().total().value());
-            
-            if (!hits.isEmpty()) {
-                for (Hit<LogEntry> hit : hits) {
-                    LogEntry log = hit.source();
-                    if (log != null) {
-                        logs.add(log);
-                        System.out.println("Log Entry - IP: " + log.getClientIp() + 
-                                         ", Timestamp: " + log.getTimestamp() + 
-                                         ", Action: " + log.getAction());
-                        System.out.println("Total logs collected so far: " + logs.size());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Error fetching logs: " + e.getMessage());
             e.printStackTrace();
         }
         return logs;
